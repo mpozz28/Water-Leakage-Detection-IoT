@@ -11,7 +11,8 @@
 
 > An end-to-end IoT/CPS pipeline that detects water leaks in industrial tanks **in real time**, running ML inference **directly on a Raspberry Pi** (< 1 ms per prediction) with no cloud dependency. From sensor to dashboard: Arduino → MQTT → Random Forest → InfluxDB → Grafana.
 
-![Demo](docs/images/dashboard.gif)
+![Dashboard](docs/images/dashboard.gif)
+![Demo](docs/images/demo.gif)
 
 📄 **Paper:** *Real-Time Water Leakage Detection: A Multi-Tiered IoT Architecture using Machine Learning* — Faculdade de Engenharia da Universidade do Porto (FEUP)
 
@@ -36,31 +37,6 @@ Simple **threshold-based** systems can't tell a *tank that is low but stable* fr
 ## 🏗️ Architecture
 
 ![Architecture](docs/images/architecture.png)
-
-```mermaid
-flowchart LR
-    subgraph Edge["Edge Layer"]
-        S1["4× simulated tanks<br/>(Python threads)"]
-        S2["Real tank<br/>Arduino + HC-SR04 + DHT11"]
-        A["RGB LED · Buzzer"]
-    end
-    subgraph Proc["Processing Layer — Raspberry Pi"]
-        B["MQTT Broker"]
-        C["Python subscriber<br/>state + feature calc"]
-        M["Random Forest<br/>[Distance, Diff]"]
-    end
-    subgraph Data["Data Layer"]
-        I[("InfluxDB")]
-        G["Grafana"]
-    end
-    S1 -- "sensors/{id}/distance" --> B
-    S2 -- "MQTT over WiFi" --> B
-    B --> C --> M
-    M -- "Leakage: True/False" --> I
-    C -- "raw telemetry" --> I
-    I --> G
-    M -. "buzzer command" .-> A
-```
 
 | Layer | Component | Role |
 |---|---|---|
